@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>circle crash</title>
+	<style type="text/css">
+		html{
+			height:100%;
+			width:100%;
+		}
+		body{
+			height:100%;
+			width:100%;
+			overflow:hidden;
+			margin:0px;
+		}
+		ul{
+			padding: 0px;
+			position:absolute;
+			top:3%;
+			left:3%;
+		}
+		li{
+			float:left;
+			list-style: none;
+
+		}
+	</style>
+</head>
+<body>
+	<canvas id="can" >你的浏览器不支持canvas</canvas>
+	<ul>
+		
+		<li>
+			<button id="changeBackColor" >变换背景</button>
+		</li>
+		<li>
+			<button id="changeDirection" >逆向转换</button>
+		</li>
+	</ul>
+<script type="text/javascript">
+var can=document.getElementById("can");
+can.width=document.body.clientWidth;
+can.height=document.body.clientHeight;
+
+var context=can.getContext("2d");
+var changeBack=document.getElementById("changeBackColor");
+var nixiang=document.getElementById("changeDirection");
+var backColor="white";
+context.globalAlpha=0.8;
+//context.globalCompositeOperation="";
+
+var balls=[];
+window.onload=function(){
+	initBalls();
+	setInterval(function(){
+		updateBalls();
+	},60)
+
+}
+
+nixiang.onclick=function(){
+	for(var i=0;i<balls.length;i++)
+	{
+		balls[i].vx*=-1;
+		balls[i].vy*=-1;
+	}
+}
+
+changeBack.onclick=function(){
+	if(backColor=="white"){
+		backColor="black";
+	}
+	else{
+		backColor="white";
+	}
+}
+
+
+function initBalls(){
+
+	for(var i=0;i<80;i++){
+		var radius=Math.random()*22+20;
+		var bx=Math.random()*(can.width-2*radius)+radius;
+		var by=Math.random()*(can.height-2*radius)+radius;
+		context.fillStyle=
+		"rgb("+
+		Math.round(Math.random()*255)+","+
+		Math.round(Math.random()*255)+","+
+		Math.round(Math.random()*255)+")";
+		context.beginPath();
+		context.arc(bx,by,radius,0,2*Math.PI);
+		context.fill();
+		balls[i]={
+			x:bx,
+			y:by,
+			vx:Math.pow(-1,Math.round(Math.random()*10))*(Math.random()*3+3),
+			vy:Math.pow(-1,Math.round(Math.random()*10))*(Math.random()*3+3),
+			color:context.fillStyle,
+			r:radius
+		};
+		console.log(balls[i].vx);
+
+	}
+}
+function updateBalls(){
+	for(var i=0;i<balls.length;i++){
+
+		balls[i].x+=balls[i].vx;
+		balls[i].y+=balls[i].vy;
+		if(balls[i].x+balls[i].r>=can.width){
+			balls[i].x=can.width-balls[i].r;
+			balls[i].vx=-Math.round(Math.random()*5+2);
+		}
+		if(balls[i].x-balls[i].r<=0){
+			balls[i].x=balls[i].r;
+			balls[i].vx=Math.round(Math.random()*5+2);
+		}
+		if(balls[i].y+balls[i].r>=can.height){
+			balls[i].y=can.height-balls[i].r;
+			balls[i].vy=-Math.round(Math.random()*5+2);
+		}
+		if(balls[i].y+balls[i].vy-balls[i].r<=0){
+			balls[i].y=balls[i].r;
+			balls[i].vy=Math.round(Math.random()*5+2);
+		}
+	}
+	drawBalls();
+}
+function drawBalls(){
+	context.clearRect(0,0,can.width,can.height);
+	context.fillStyle=backColor;
+	context.fillRect(0,0,can.width,can.height);
+
+	
+	for(var i=0;i<balls.length;i++){
+		context.beginPath();
+		context.fillStyle=balls[i].color;
+		context.arc(balls[i].x,balls[i].y,balls[i].r,0,2*Math.PI);
+		context.fill();
+	}
+}
+
+</script>
+</body>
+</html>
